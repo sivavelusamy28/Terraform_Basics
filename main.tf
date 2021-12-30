@@ -15,11 +15,17 @@ provider "aws" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = "ami-0ed9277fb7eb570c9"
+  ami           = var.aws_ami
   instance_type = "t2.micro"
   tags = {
     name = "App-Server01"
     stage = "Dev"
   }
   
+}
+
+variable "aws_ami"{
+    description = "AMI image name"
+    default = "ami-0ed9277fb7eb570c9"
+    type = string
 }
