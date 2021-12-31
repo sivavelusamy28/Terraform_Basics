@@ -15,12 +15,23 @@ provider "aws" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = var.aws_ami
+  ami           = data.aws_ami.ami_id.id
   instance_type = var.aws_instance_type
   tags = {
     name  = "App-Server"
     stage = "Dev"
   }
-
 }
 
+#data could not be substituted in variables/tfvars file
+data "aws_ami" "ami_id" {
+  owners = ["self"]
+  filter {
+    name   = "name"
+    values = ["M*"]
+  }
+}
+
+output "aws_instance_from_data_source" {
+  value = data.aws_ami.ami_id
+}
