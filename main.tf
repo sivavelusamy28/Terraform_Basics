@@ -17,8 +17,17 @@ provider "aws" {
 resource "aws_instance" "app_server" {
   ami           = data.aws_ami.ami_id.id
   instance_type = var.aws_instance_type
+  count = 2
+  user_data     = <<-EOF
+                #!/bin/bash
+                yum update -y
+                yum install -y httpd
+                systemctl start httpd
+                systemctl enable httpd
+                echo "<h1> Hello World </h1>" > /var/www/html/index.html
+                EOF
   tags = {
-    name  = "App-Server"
+    name  = "App-Server-${count.index}"
     stage = "Dev"
   }
 }
@@ -32,6 +41,3 @@ data "aws_ami" "ami_id" {
   }
 }
 
-output "aws_instance_from_data_source" {
-  value = data.aws_ami.ami_id
-}
